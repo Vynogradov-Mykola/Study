@@ -13,12 +13,7 @@ void get();
 void show();
 str_line operator+ (str_line &cn);
 str_line operator- (str_line &cn);
-friend bool operator<(str_line &cn, str_line &cn1);
-friend bool operator<=(str_line &cn, str_line &cn1);
-friend bool operator>(str_line &cn, str_line &cn1);
-friend bool operator>=(str_line &cn, str_line &cn1);
-friend bool operator==(str_line &cn, str_line &cn1);
-friend bool operator!=(str_line &cn, str_line &cn1);
+
 int inf();
 };
 void str_line::get()
@@ -54,30 +49,6 @@ int str_line::inf()
     if(line.length()>65535) return 1;
     else return 0;
 }
-bool operator<(str_line &cn, str_line &cn1)
-{
-    return cn.line<cn1.line;
-}
-bool operator<=(str_line &cn, str_line &cn1)
-{
-    return cn.line<=cn1.line;
-}
-bool operator>(str_line &cn, str_line &cn1)
-{
-    return cn.line>cn1.line;
-}
-bool operator>=(str_line &cn, str_line &cn1)
-{
-    return cn.line>=cn1.line;
-}
-bool operator==(str_line &cn, str_line &cn1)
-{
-    return cn.line==cn1.line;
-}
-bool operator!=(str_line &cn, str_line &cn1)
-{
-    return cn.line!=cn1.line;
-}
 int main()
 {
     str_line a,b;
@@ -99,11 +70,6 @@ int main()
     a=a-b;
     cout<<"a=a-b=";
     a.show();
-    if(a<b) cout<<"a<b"<<endl;
-    if(a<=b) cout<<"a<=b"<<endl;
-    if(a>b) cout<<"a>b"<<endl;
-    if(a>=b) cout<<"a>=b"<<endl;
-    if(a==b) cout<<"a=b"<<endl;
-    if(a!=b) cout<<"a!=b"<<endl;
+   
     return 0;
 }
