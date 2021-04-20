@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <climits>
-
+#include <string.h>
 using namespace std;
 class str_line
 {
