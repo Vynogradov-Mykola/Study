@@ -105,14 +105,14 @@ void rewrite(string path_to_f)      //rewrite function
                 printf("Artist:      %s\n",pId3Tag->artist);
                 printf("Album:       %s\n",pId3Tag->album);
                 cout<<"Year:        "<<pId3Tag->year[0]<<pId3Tag->year[1]<<pId3Tag->year[2]<<pId3Tag->year[3];
-                //printf("Year:        %s\n",pId3Tag->year);
+
                 printf("\nDescription: %s\n",pId3Tag->description);
-                //printf("Ganre:       %d\n",pId3Tag->ganre);
-                cout<<"Ganre:       "<<ganres[gnr];
-                //  cout<<"Ganre:          "<<pId3Tag->ganre[gnr];
+
+                if(gnr>0) cout<<"Ganre:       "<<ganres[gnr];
+                  else cout<<"Ganre:       Other";
+
      }
      cout<<"\n";
-    //printf("ssss %s\n",pId3Tag->year);
     stringstream converter;
 
     fclose(fp);
@@ -175,10 +175,21 @@ void rewrite(string path_to_f)      //rewrite function
     }
     if(choser==6)       //change ganre;
     {
-
-        cout<<"Enter new index of ganre: ";
+        cout<<"Enter new genre: ";
+        string g;
+        cin>>g;
         int i;
-        cin>>i;
+        for(int j=0;j<148;j++)
+        {
+            if (g==ganres[j])
+            i=j;
+        }
+       // int i;
+      // cin>>i;
+      //  pId3Tag->ganre=static_cast<char>(i);
+      //  cout<<"Enter new index of ganre: ";
+       // int i;
+        //cin>>i;
         pId3Tag->ganre=static_cast<char>(i);
 
     }
@@ -215,8 +226,8 @@ void print(string path_to_f)
 
                printf("\nDescription: %s\n",pId3Tag->description);
 
-               cout<<"Ganre:       "<<ganres[gnr];
-
+              if(gnr>0) cout<<"Ganre:       "<<ganres[gnr];
+                else cout<<"Ganre:       Other";
     }
     cout<<"\n";
 //===================print TAG==========================//
@@ -250,19 +261,16 @@ int main()
             print(path_to_files[i]);  //print all tags in dir
 
         }
-    cout<<"Change to rewrite ";
+    cout<<"\nChange to rewrite ";
     int num_of_file = 0;
    while(num_of_file!=-1){
     cin>>num_of_file;
-
+    cout<<"\n";
        rewrite(path_to_files[num_of_file]);
         cout<<"If you want to exit enter   -1      else to continue ";
            cin>>num_of_file;
 }
-
-
     _getch();
-
 
     return 0;
 }
