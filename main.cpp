@@ -16,7 +16,8 @@
 
 using namespace std;
 #define ID3_MAX_SIZE 128
-string path = "D:/F";   //PATH TO DIRECTORY
+string path;   //PATH TO DIRECTORY
+int corrections; // variable of errors
 vector<string> LIST_OF_PATH;    // LIST OF PATHS
 int num_of_files=0;     //Global int with number of all files in directory
 string ganres[148]={"Blues","Classic Rock","Country","Dance","Disco","Funk","Grunge",
@@ -58,9 +59,8 @@ typedef struct IDv3Tag      //structure ID3 Tag (128 B)
     char album[30];
     char year[4];
     char description[30];
-  //  char track[1];
     char ganre;
-// unsigned short ganre;
+
 } ID3TAG;
 
 long idv3_file_offset(FILE* fp)  //function to find pos of id3
@@ -69,7 +69,9 @@ long idv3_file_offset(FILE* fp)  //function to find pos of id3
     return ftell(fp) - ID3_MAX_SIZE;  //return pos
 }
 void filefinder()           //get a list with names of all files in directory
-{
+{   cout<<"Enter path to directory:  ";
+
+    cin>>path;
     DIR *directory = opendir(path.c_str());   //open directory
     struct dirent *direntStruct;
 
@@ -80,7 +82,14 @@ void filefinder()           //get a list with names of all files in directory
             num_of_files+=1;
         }
     }
+    else {cout<<"Incorrect path to directory, to try again select 1, to exit select 2\n";
+        cin>>corrections;
+        if(corrections==1)
+          { cin>>path;
 
+            filefinder();
+          }
+         }
     closedir(directory);   //close directory
 }
 
@@ -89,7 +98,7 @@ void rewrite(string path_to_f)      //rewrite function
      const char *cster=path_to_f.c_str();    //variable with char_path_to_file
 
      FILE* fp;
-     if ((fp = fopen(cster,"r+b")) == NULL)   // open file in read-mode
+     if ((fp = fopen(cster,"r+b")) == NULL)   // open file in read+write-mode
          printf("Unable to open file %s for reading\n", cster); //if can`t open file
 
      char* buf = new char[ID3_MAX_SIZE];  //bufer
@@ -105,24 +114,18 @@ void rewrite(string path_to_f)      //rewrite function
                 printf("Artist:      %s\n",pId3Tag->artist);
                 printf("Album:       %s\n",pId3Tag->album);
                 cout<<"Year:        "<<pId3Tag->year[0]<<pId3Tag->year[1]<<pId3Tag->year[2]<<pId3Tag->year[3];
-
                 printf("\nDescription: %s\n",pId3Tag->description);
-
                 if(gnr>0) cout<<"Ganre:       "<<ganres[gnr];
-                  else cout<<"Ganre:       Other";
-
+                else cout<<"Ganre:       Other";
      }
      cout<<"\n";
     stringstream converter;
-
     fclose(fp);
    cout<<"\nChoose what to change:\n1-Name \n2-Artist \n"
             "3-Album \n4-Year \n5-Description \n6-Ganre ";
    int choser;      //variable to chose what to change
    cin>>choser;
-
    fp=fopen(cster,"r+b");  //open file in r+b mode (read+write)
-
      int is=idv3_file_offset(fp);   //variable pos of id3
     if(choser==1)               //change name;
     {
@@ -184,12 +187,7 @@ void rewrite(string path_to_f)      //rewrite function
             if (g==ganres[j])
             i=j;
         }
-       // int i;
-      // cin>>i;
-      //  pId3Tag->ganre=static_cast<char>(i);
-      //  cout<<"Enter new index of ganre: ";
-       // int i;
-        //cin>>i;
+
         pId3Tag->ganre=static_cast<char>(i);
 
     }
@@ -199,19 +197,15 @@ void rewrite(string path_to_f)      //rewrite function
 }
 void print(string path_to_f)
 {
-
-
-   const char *cster=path_to_f.c_str();     //convert STRING path into CHAR path (for fopen())
+    const char *cster=path_to_f.c_str();     //convert STRING path into CHAR path (for fopen())
     FILE* fp;
     if ((fp = fopen(cster,"r")) == NULL)   // open file in read-mode
-        printf("Unable to open file %s for reading\n", cster);
+    printf("Unable to open file %s for reading\n", cster);
 
     char* buf = new char[ID3_MAX_SIZE];
     memset((void*)buf, 0x00, ID3_MAX_SIZE);
 
-
     fseek(fp, idv3_file_offset(fp), SEEK_SET);  //pos of tag
-
     fread(buf, 1, ID3_MAX_SIZE, fp);  //read tag
 
     ID3TAG* pId3Tag = NULL;
@@ -222,12 +216,9 @@ void print(string path_to_f)
                printf("Artist:      %s\n",pId3Tag->artist);
                printf("Album:       %s\n",pId3Tag->album);
                cout<<"Year:        "<<pId3Tag->year[0]<<pId3Tag->year[1]<<pId3Tag->year[2]<<pId3Tag->year[3];
-
-
                printf("\nDescription: %s\n",pId3Tag->description);
-
-              if(gnr>0) cout<<"Ganre:       "<<ganres[gnr];
-                else cout<<"Ganre:       Other";
+               if(gnr>0) cout<<"Ganre:       "<<ganres[gnr];
+               else cout<<"Ganre:       Other";
     }
     cout<<"\n";
 //===================print TAG==========================//
@@ -239,11 +230,12 @@ void print(string path_to_f)
 int main()
 {
     setlocale(LC_ALL, "Russian");
-    cout<<"Enter path to directory:  ";
-    cin>>path;
-
+    cout<<"Work with directory or with one file? \n1-directory\n2-file\nEnter: ";
+    int changer=0;
+    cin>>changer;
+    if(changer==1){
     filefinder();
-
+    if (corrections==2) return 0;
     vector<string> path_to_files;
 //===================path to directory+name of file========//
     for(int i=2;i<num_of_files;i++)
@@ -253,13 +245,10 @@ int main()
     }
 //===================path to directory+name of file========//
 
-
-
        for(int i=0;i<num_of_files-2;i++){
            cout<<"========================================"<<i<<"  Track=="
 "===============================================================\n";
             print(path_to_files[i]);  //print all tags in dir
-
         }
     cout<<"\nChange to rewrite ";
     int num_of_file = 0;
@@ -269,7 +258,37 @@ int main()
        rewrite(path_to_files[num_of_file]);
         cout<<"If you want to exit enter   -1      else to continue ";
            cin>>num_of_file;
+
+           cout<<"\nEnter LIST  to see all tracks else to continue";
+           string list;
+           cin>>list;
+           if(list=="LIST")
+           {
+               for(int i=0;i<num_of_files-2;i++)
+               {
+                   cout<<"========================================"<<i<<"  Track=="
+                   "===============================================================\n";
+                   print(path_to_files[i]);  //print all tags in dir
+               }
+           }
+           cout<<"\nChange to rewrite ";
 }
+    }
+    else            //for work with one file
+    {   cout<<"Enter path: ";
+        cin>>path;          //enter path to file
+        print(path);            //print information
+        cout<<"Do you want to rewrite?   yes/no\n";
+        string change;              //changer
+        cin>>change;
+        while(change=="yes")        //rewrite cycle
+        {
+            rewrite(path);
+            cout<<"Continue rewritre?   yes/no\n";
+            cin>>change;
+        }
+
+    }
     _getch();
 
     return 0;
