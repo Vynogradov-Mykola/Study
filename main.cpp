@@ -4,12 +4,8 @@
 #include <string.h>
 #include <iostream>
 #include <fstream>
-#include <Windows.h>
 #include <vector>
-#include <tchar.h>
 #include <dirent.h>
-#include "dirent.h"
-#include <fileapi.h>
 #include <sstream>
 
 
@@ -20,6 +16,7 @@ string path;   //PATH TO DIRECTORY
 int corrections; // variable of errors
 vector<string> LIST_OF_PATH;    // LIST OF PATHS
 int num_of_files=0;     //Global int with number of all files in directory
+int num_of_file=0;    //Global int, pos number of file
 string ganres[148]={"Blues","Classic Rock","Country","Dance","Disco","Funk","Grunge",
                    "Hip-Hop","Jazz","Metal","New Age","Oldies","Other","Pop",
                    "R&B","Rap","Reggae","Rock","Techno","Industrial","Alternative",
@@ -90,7 +87,7 @@ void filefinder()           //get a list with names of all files in directory
             filefinder();
           }
          }
-    closedir(directory);   //close directory
+    closedir(directory);            //close directory
 }
 
 void rewrite(string path_to_f)      //rewrite function
@@ -101,15 +98,16 @@ void rewrite(string path_to_f)      //rewrite function
      if ((fp = fopen(cster,"r+b")) == NULL)   // open file in read+write-mode
          printf("Unable to open file %s for reading\n", cster); //if can`t open file
 
-     char* buf = new char[ID3_MAX_SIZE];  //bufer
-     memset((void*)buf, 0x00, ID3_MAX_SIZE); //memset bufer
-     fseek(fp, idv3_file_offset(fp), SEEK_SET);  //pos of tag
+     char* buf = new char[ID3_MAX_SIZE];             //bufer
+     memset((void*)buf, 0x00, ID3_MAX_SIZE);         //memset bufer
+     fseek(fp, idv3_file_offset(fp), SEEK_SET);      //pos of tag
 
-     fread(buf, 1, ID3_MAX_SIZE, fp);  //read tag
+     fread(buf, 1, ID3_MAX_SIZE, fp);         //read tag
      ID3TAG* pId3Tag = NULL;
      if ((pId3Tag = reinterpret_cast<ID3TAG*>(buf)) != NULL)
-     {   int gnr=pId3Tag->ganre; //index of ganre
-
+     {   int gnr=pId3Tag->ganre;         //index of ganre
+         cout<<"========================================"<<num_of_file<<"  Track=="
+         "===============================================================\n";
                 printf("Name:        %s\n",pId3Tag->name);
                 printf("Artist:      %s\n",pId3Tag->artist);
                 printf("Album:       %s\n",pId3Tag->album);
@@ -125,70 +123,71 @@ void rewrite(string path_to_f)      //rewrite function
             "3-Album \n4-Year \n5-Description \n6-Ganre ";
    int choser;      //variable to chose what to change
    cin>>choser;
-   fp=fopen(cster,"r+b");  //open file in r+b mode (read+write)
-     int is=idv3_file_offset(fp);   //variable pos of id3
-    if(choser==1)               //change name;
+   fp=fopen(cster,"r+b");    //open file in r+b mode (read+write)
+     int is=idv3_file_offset(fp);      //variable pos of id3
+    if(choser==1)                  //change name;
     {
         string nam;
         cout<<"Enter new name: ";
-        cin>>nam;
-        converter<<nam;
-        converter>>pId3Tag->name;
+        cin>>nam;                   //enter str name
+        converter.clear();
+        converter<<nam;             //convert str name to char name
+        converter>>pId3Tag->name;   //
         converter.clear();
     }
     if(choser==2)       //change artist;
     {
         string artist_;
         cout<<"Enter new artist: ";
-        cin>>artist_;
+        cin>>artist_;               //enter artist_
         converter.clear();
-        converter<<artist_;
-        converter>>pId3Tag->artist;
+        converter<<artist_;         //convert str artist_ to char artist
+        converter>>pId3Tag->artist; //
         converter.clear();
     }
     if(choser==3)       //change album;
     {
         string albom;
         cout<<"Enter new album: ";
-        cin>>albom;
+        cin>>albom;             //enter str albom
         converter.clear();
-        converter<<albom;
-        converter>>pId3Tag->album;
+        converter<<albom;           // convert str albom to char album
+        converter>>pId3Tag->album;  //
         converter.clear();
     }
     if(choser==4)       //change year;
     {
         string year;
         cout<<"Enter new year: ";
-        cin>>year;
+        cin>>year;              //enter year
         converter.clear();
-        converter<<year;
+        converter<<year;        // convert str year to char year
         converter>>pId3Tag->year;
         converter.clear();
     }
-    if(choser==5)       //change decription;
+    if(choser==5)       //change description;
     {
         string descp;
         cout<<"Enter new comment: ";
-        cin>>descp;
+        cin>>descp;     //enter description
         converter.clear();
-        converter<<descp;
-        converter>>pId3Tag->description;
+        converter<<descp;                   // converter str desc to char description
+        converter>>pId3Tag->description;    //
         converter.clear();
     }
     if(choser==6)       //change ganre;
     {
         cout<<"Enter new genre: ";
         string g;
-        cin>>g;
+        cin>>g;                         //enter str g
         int i;
-        for(int j=0;j<148;j++)
-        {
-            if (g==ganres[j])
-            i=j;
+        for(int j=0;j<148;j++)  //===================
+        {                       // convert str g
+            if (g==ganres[j])   //
+            i=j;                //===================
         }
 
-        pId3Tag->ganre=static_cast<char>(i);
+        pId3Tag->ganre=static_cast<char>(i);    //convert inde of ganre to char ganre
 
     }
      fseek(fp, is, SEEK_SET);   //set position
@@ -251,15 +250,15 @@ int main()
             print(path_to_files[i]);  //print all tags in dir
         }
     cout<<"\nChange to rewrite ";
-    int num_of_file = 0;
+   // int num_of_file = 0;
    while(num_of_file!=-1){
     cin>>num_of_file;
     cout<<"\n";
-       rewrite(path_to_files[num_of_file]);
+       rewrite(path_to_files[num_of_file]);         //call rewrite function
         cout<<"If you want to exit enter   -1      else to continue ";
            cin>>num_of_file;
 
-           cout<<"\nEnter LIST  to see all tracks else to continue";
+           cout<<"\nEnter LIST  to see all tracks else to continue ";
            string list;
            cin>>list;
            if(list=="LIST")
