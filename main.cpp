@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <conio.h>
 #include <string.h>
@@ -7,9 +6,7 @@
 #include <vector>
 #include <dirent.h>
 #include <sstream>
-#include <windows.h>
-#include <locale>
-#include <codecvt>
+
 using namespace std;
 #define ID3_MAX_SIZE 128
 string path;   //PATH TO DIRECTORY
