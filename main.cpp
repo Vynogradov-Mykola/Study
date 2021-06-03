@@ -9,7 +9,6 @@
 #include <sstream>
 
 
-
 using namespace std;
 #define ID3_MAX_SIZE 128
 string path;   //PATH TO DIRECTORY
